@@ -111,7 +111,6 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
       label: attr,
       kind: CompletionItemKind.Property
     };
-    let hasEnums = false;
     if(svgAttr == undefined && svg.attributes[attr]) {
       svgAttr = svg.attributes[attr];
     }
@@ -128,18 +127,12 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
           item.documentation = svgAttr.documentation + '\n\n**DEPRECATED**';
         }
       }
-      if(svgAttr.enum) {
-        hasEnums = true;
-      }
       if(svgAttr.type) {
         item.detail = svgAttr.type;
       }
-      if(/^(color|fill|stroke|paint)$/.test(svgAttr.type)) {
-        hasEnums = true;
-      }
     }
-    item.insertText = `${item.label}=""`;
-    item.command = {command: "_svg.moveCursor", title: "Cursor Left", arguments:[-1, hasEnums]};
+    item.insertTextFormat = InsertTextFormat.Snippet
+    item.insertText = `${item.label}="\${1}"\${0}`;
     return item;
   }
 
@@ -185,17 +178,27 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
     position: Position,
     token: CancellationToken
   ): CompletionItem[] {
-    let prevChar = document.getText(Range.create(utils.translateRange(position, 0, -1), position));
-    let nextChar = document.getText(Range.create(position, utils.translateRange(position, 0, 1)));
-    if(prevChar == '<') {
+    let prevChar = document.getText(Range.create(
+      utils.translateRange(position, 0, -1),
+      position
+    ));
+    let nextChar = document.getText(Range.create(
+      position,
+      utils.translateRange(position, 0, 1)
+    ));
+    let nextChars = document.getText(Range.create(
+      position,
+      Position.create(position.line + 1, 0)
+    )).replace(/^[^="']+/, '')
+
+    if(prevChar === '<') {
       return this.provideTagItems(document, position, token);
-    }
-    else if(prevChar == ' ' && /[\/>\s]/.test(nextChar)) {
+    } else if(prevChar !== ' ' && !/["']/.test(nextChars[0]) && /[\/>\s]/.test(nextChar)) {
       return this.provideAttributesItems(document, position, token);
-    }
-    else if(prevChar == '"' || prevChar == '=') {
+    } else if(prevChar === '"' || prevChar === "'" || prevChar === '=') {
       return this.provideEnumItems(document, position, token);
     }
+
     return null;
   }
 
@@ -225,7 +228,11 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
   /**
    * 提供属性名称的自动完成选项
    */
-  provideAttributesItems(document: TextDocument, position: Position, token: CancellationToken): CompletionItem[] {
+  provideAttributesItems(
+    document: TextDocument,
+    position: Position,
+    token: CancellationToken
+  ): CompletionItem[] {
     let items: CompletionItem[] = [];
     let startTag = utils.getInStartTag(token, document, position);
     if(startTag && svg.elements[startTag.tagName]) {

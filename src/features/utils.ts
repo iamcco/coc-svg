@@ -208,14 +208,22 @@ export function getParentTagFromOffset(token: CancellationToken, body: string, o
 /**
  * 如果当前在一个标签头内，返回 XML 标签信息，否则返回 undefined。
  */
-export function getInStartTag(token: CancellationToken, doc: TextDocument, position: Position): ITagMatchInfo {
+export function getInStartTag(
+  token: CancellationToken,
+  doc: TextDocument,
+  position: Position
+): ITagMatchInfo {
   return getInStartTagFromOffset(token, doc.getText(), doc.offsetAt(position));
 }
 
 /**
  * 如果当前在一个标签头内，返回 XML 标签信息，否则返回 undefined。
  */
-export function getInStartTagFromOffset(token: CancellationToken, body: string, offset: number): ITagMatchInfo {
+export function getInStartTagFromOffset(
+  token: CancellationToken,
+  body: string,
+  offset: number
+): ITagMatchInfo {
   let doc = body.substr(0, offset);
   let match = /<([\/\!\?]?[\w\-]*)(\s*[^>]*?)$/gi.exec(doc);
   if (match && match.length > 1) {

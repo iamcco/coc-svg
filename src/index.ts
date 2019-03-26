@@ -35,7 +35,7 @@ export function activate(context: ExtensionContext) {
     'svg',
     ['svg', 'xml'],
     new SVGCompletionItemProvider(),
-    ["<", " ", "=", "\""],
+    ['<', ' ', '=', '"', "'"],
     priority
   )
   let d2 = languages.registerDocumentSymbolProvider(SVG_MODE, new SvgSymbolProvider());
