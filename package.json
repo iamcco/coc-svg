@@ -1,0 +1,120 @@
+{
+  "name": "coc-svg",
+  "description": "svg plugin for coc.nvim",
+  "keywords": [
+    "coc.nvim",
+    "svg",
+    "neovim",
+    "vim"
+  ],
+  "version": "0.0.3",
+  "publisher": "iamcco",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamcco/coc-svg.git"
+  },
+  "main": "./lib/src/index.js",
+  "engines": {
+    "coc": "^0.0.46"
+  },
+  "activationEvents": [
+    "onLanguage:svg",
+    "onLanguage:xml"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "svg.minifySvg",
+        "title": "Minify SVG"
+      },
+      {
+        "command": "svg.prettySvg",
+        "title": "Pretty SVG"
+      },
+      {
+        "command": "svg.showSvg",
+        "title": "Preview SVG"
+      }
+    ],
+    "configuration": {
+      "title": "svg",
+      "properties": {
+        "svg.completion.showAdvanced": {
+          "title": "Show advanced items in completion list.",
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies whether advanced items that are not commonly used are displayed in the AutoComplete list."
+        },
+        "svg.completion.showDeprecated": {
+          "title": "Show deprecated items in completion list.",
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies whether advanced items that are deprecated are displayed in the AutoComplete list."
+        },
+        "svg.disableFormatOnSave": {
+          "title": "[Experimental]Disable SVGO Format on save",
+          "type": "boolean",
+          "default": false,
+          "description": "Focus Disable SVGO Format On Save event if editor.formatOnSave is true"
+        },
+        "svg.format.plugins": {
+          "title": "SVGO plugins array.",
+          "type": "object",
+          "default": {
+            "sortAttrs": true
+          },
+          "description": "Each items corresponds to a plugin that should be enabled, the rest is disabled."
+        },
+        "svg.preview.background": {
+          "title": "Svg Preview Background",
+          "type": "string",
+          "enum": [
+            "transparent",
+            "white",
+            "black",
+            "custom"
+          ],
+          "default": "transparent",
+          "description": "Specifies the Svg Preview Background"
+        },
+        "svg.preview.backgroundCustom": {
+          "title": "Svg Preview Custom Background",
+          "type": "string",
+          "default": "#eee",
+          "description": "Specifies the Svg Preview Custom Background"
+        },
+        "svg.version": {
+          "title": "SVG Version",
+          "enum": [
+            "1.1",
+            "2.0"
+          ],
+          "description": "Specifies the SVG standard version that will be used for autocompletion and validation.",
+          "default": "1.1"
+        },
+        "svg.priority": {
+          "type": "integer",
+          "default": 99
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^11.11.7",
+    "@types/svgo": "^1.0.1",
+    "coc.nvim": "^0.0.62",
+    "typescript": "^3.3.4000"
+  },
+  "dependencies": {
+    "colors": "^1.1.2",
+    "sprintf-js": "^1.0.3",
+    "svgo": "^1.0.1",
+    "vscode-languageserver-protocol": "^3.15.0-next.1",
+    "vscode-uri": "^1.0.6"
+  }
+}
