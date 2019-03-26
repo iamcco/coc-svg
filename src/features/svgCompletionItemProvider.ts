@@ -51,9 +51,7 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
   /**
    * 创建一个新的自动完成项。
    */
-  async createCompletionItem(
-    document: TextDocument,
-    position: Position,
+  createCompletionItem(
     element: string,
     ele: ISvgJsonElement
   ) {
@@ -61,10 +59,6 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
       label: element,
       kind: CompletionItemKind.Class
     };
-    const formatOptions = await workspace.getFormatOptions(document.uri)
-    const doc = workspace.getDocument(document.uri)
-    const currentLine = doc.getline(position.line)
-    const currentIndent = currentLine.match(/^\s*/)[0]
 
     if(ele.deprecated){
       item.detail = 'DEPRECATED';
@@ -102,11 +96,7 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
     }
     // snippet
     item.insertTextFormat = InsertTextFormat.Snippet
-    item.insertText = utils.normalizeSnippetString(
-      snippetString,
-      currentIndent,
-      formatOptions
-    );
+    item.insertText = snippetString
     return item;
   }
 
@@ -190,15 +180,15 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
   /**
    * 完成选项入口方法
    */
-  async provideCompletionItems(
+  provideCompletionItems(
     document: TextDocument,
     position: Position,
     token: CancellationToken
-  ): Promise<CompletionItem[]> {
+  ): CompletionItem[] {
     let prevChar = document.getText(Range.create(utils.translateRange(position, 0, -1), position));
     let nextChar = document.getText(Range.create(position, utils.translateRange(position, 0, 1)));
     if(prevChar == '<') {
-      return await this.provideTagItems(document, position, token);
+      return this.provideTagItems(document, position, token);
     }
     else if(prevChar == ' ' && /[\/>\s]/.test(nextChar)) {
       return this.provideAttributesItems(document, position, token);
@@ -212,8 +202,7 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
   /**
    * 提供属性值的自动完成选项
    */
-  provideEnumItems(document: TextDocument, position: Position, token: CancellationToken): CompletionItem[]
-  {
+  provideEnumItems(document: TextDocument, position: Position, token: CancellationToken): CompletionItem[] {
     let attrMatchInfo = utils.getInAttirubte(token, document, position);
     if(attrMatchInfo) {
       //console.log('attrMatchInfo', attrMatchInfo.tagName, attrMatchInfo.attrName);
@@ -268,18 +257,18 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
   /**
    * 提供标签的自动完成选项
    */
-  async provideTagItems(
+  provideTagItems(
     document: TextDocument,
     position: Position,
     token: CancellationToken
-  ): Promise<CompletionItem[]> {
+  ): CompletionItem[] {
     let items: CompletionItem[] = [];
     let prevTag = utils.getPrevTag(document, position);
     let parentTag = utils.getParentTag(token, document, position);
 
     if(prevTag === undefined) {
       let ele = svg.elements['svg'];
-      let item = await this.createCompletionItem(document, position, 'svg', ele);
+      let item = this.createCompletionItem('svg', ele);
       item.textEdit = TextEdit.insert(position, "svg xmlns=\"http://www.w3.org/2000/svg\">\n\t${0}\n</svg>");
       return [item];
     }
@@ -287,7 +276,7 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
       let parentEle = svg.elements[parentTag.tagName];
       if(parentEle.subElements) {
         for(let subElement of parentEle.subElements) {
-          let item = await this.createCompletionItem(document, position, subElement, svg.elements[subElement]);
+          let item = this.createCompletionItem(subElement, svg.elements[subElement]);
           if(item) {
             items.push(item);
           }
@@ -296,7 +285,7 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
       }
     }
     for(let element in svg.elements) {
-      let item = await this.createCompletionItem(document, position, element, svg.elements[element]);
+      let item = this.createCompletionItem(element, svg.elements[element]);
       if(item) {
         items.push(item);
       }

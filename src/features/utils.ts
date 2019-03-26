@@ -6,7 +6,6 @@ import {
   CancellationToken,
   MarkupContent,
   MarkedString,
-  FormattingOptions,
 } from 'vscode-languageserver-protocol';
 
 // cover cb type async function to promise
@@ -20,28 +19,6 @@ export function pcb(
       })
     })
   }
-}
-
-export function normalizeSnippetString(
-  snippet: string,
-  indent: string,
-  opts: FormattingOptions
-): string {
-  let lines = snippet.split(/\r?\n/)
-  let ind = opts.insertSpaces ? ' '.repeat(opts.tabSize) : '\t'
-  let tabSize = opts.tabSize || 2
-  lines = lines.map((line, idx) => {
-    let space = line.match(/^\s*/)[0]
-    let pre = space
-    let isTab = space.startsWith('\t')
-    if (isTab && opts.insertSpaces) {
-      pre = ind.repeat(space.length)
-    } else if (!isTab && !opts.insertSpaces) {
-      pre = ind.repeat(space.length / tabSize)
-    }
-    return (idx == 0 || line.length == 0 ? '' : indent) + pre + line.slice(space.length)
-  })
-  return lines.join('\n')
 }
 
 /**
