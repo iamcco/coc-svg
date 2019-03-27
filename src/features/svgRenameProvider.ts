@@ -32,7 +32,7 @@ export class SvgRenameProvider implements RenameProvider {
     token: CancellationToken
   ): ProviderResult<WorkspaceEdit> {
     const body = document.getText();
-    const regex = new RegExp(`((id="${oldId}")|(url\\(#${oldId}\\)))`, 'g');
+    const regex = new RegExp(`((id=["']${oldId}["'])|(url\\(#${oldId}\\)))`, 'g');
     const textEdits: TextEdit[] = []
     let exp: RegExpExecArray = null;
     while(!token.isCancellationRequested && (exp = regex.exec(body))) {
@@ -48,11 +48,14 @@ export class SvgRenameProvider implements RenameProvider {
         })
       }
     }
-    return {
-      changes: {
-        [document.uri]: textEdits
-      }
-    };
+    if (textEdits.length) {
+      return {
+        changes: {
+          [document.uri]: textEdits
+        }
+      };
+    }
+    return null
   }
 
   provideRenameStartTag(
@@ -175,8 +178,8 @@ export class SvgRenameProvider implements RenameProvider {
         wordRange = doc.getWordRangeAtPosition(position, '=_"');
         if(wordRange && !utils.isRangeEmpty(wordRange)) {
           const word = document.getText(wordRange)
-          if (/id="[a-zA-Z0-9_]+"/.test(word)) {
-            return this.provideIdRename(document, word, newName, token);
+          if (/id=["'][a-zA-Z0-9_]+["']/.test(word)) {
+            return this.provideIdRename(document, word.slice(4, -1), newName, token);
           }
         }
       }

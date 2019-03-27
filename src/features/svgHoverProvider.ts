@@ -28,18 +28,19 @@ export class SvgHoverProvider implements HoverProvider {
 
     let prevChar = utils.getOffsetString(document, range.start, -1);
     let nextChar = utils.getOffsetString(document, range.end, 1);
-    let tag = null, attribute = null;
+    let tag = null;
+    let attribute = null;
+
     if(prevChar == '<' && nextChar == ' ') {
       tag = document.getText(range);
-    }
-    else if(/\s/.test(prevChar) && nextChar == '=') {
+    } else if(/\s/.test(prevChar) && nextChar === '=') {
       attribute = document.getText(range);
     }
 
     if(tag) {
       if(svg.elements[tag]){
         let ele = svg.elements[tag];
-        utils.createHover({
+        return utils.createHover({
           language: 'markdown',
           value: '<' + tag +'>\n' + ele.documentation
         })
@@ -49,7 +50,7 @@ export class SvgHoverProvider implements HoverProvider {
     if(attribute) {
       if(svg.attributes[attribute]){
         let ele = svg.attributes[attribute];
-        utils.createHover({
+        return utils.createHover({
           language: 'markdown',
           value: '[' + attribute +']\n' + ele.documentation
         })

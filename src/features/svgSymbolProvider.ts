@@ -8,8 +8,7 @@ import {
 } from 'vscode-languageserver-protocol';
 
 export class SvgSymbolProvider implements DocumentSymbolProvider {
-  provideDocumentSymbols(document: TextDocument, token: CancellationToken): SymbolInformation[]
-  {
+  provideDocumentSymbols(document: TextDocument, token: CancellationToken): SymbolInformation[] {
     var body = document.getText();
     if(token.isCancellationRequested) {
       return undefined;

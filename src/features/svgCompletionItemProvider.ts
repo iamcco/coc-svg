@@ -154,7 +154,6 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
         if(typeof e == 'object') {
           citem.documentation = e.documentation;
         }
-        citem.command = {command: "_svg.moveCursor", title: "Cursor Out Attribute", arguments:[1]};
         items.push(citem);
       });
     }
@@ -191,11 +190,14 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
       Position.create(position.line + 1, 0)
     )).replace(/^[^="']+/, '')
 
+    // tag name
     if(prevChar === '<') {
       return this.provideTagItems(document, position, token);
+    // property name
     } else if(prevChar !== ' ' && !/["']/.test(nextChars[0]) && /[\/>\s]/.test(nextChar)) {
       return this.provideAttributesItems(document, position, token);
-    } else if(prevChar === '"' || prevChar === "'" || prevChar === '=') {
+    // property value
+    } else if(prevChar === '"' || prevChar === "'" || prevChar === '=' || /["']/.test(nextChars[0])) {
       return this.provideEnumItems(document, position, token);
     }
 
@@ -211,7 +213,7 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
       //console.log('attrMatchInfo', attrMatchInfo.tagName, attrMatchInfo.attrName);
       let ele = svg.elements[attrMatchInfo.tagName];
       if(ele) {
-        let attr = ele.attributes.find(i=>(typeof i !== 'string')&&i.name==attrMatchInfo.attrName) as ISvgJsonAttribute;
+        let attr = ele.attributes.find(i => (typeof i !== 'string') && i.name === attrMatchInfo.attrName) as ISvgJsonAttribute;
         if(attr) {
           return this.createEnumCompletionItems(attr);
         }
@@ -276,7 +278,7 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
     if(prevTag === undefined) {
       let ele = svg.elements['svg'];
       let item = this.createCompletionItem('svg', ele);
-      item.textEdit = TextEdit.insert(position, "svg xmlns=\"http://www.w3.org/2000/svg\">\n\t${0}\n</svg>");
+      item.textEdit = TextEdit.insert(position, "svg${1} xmlns=\"http://www.w3.org/2000/svg\">\n\t${0}\n</svg>");
       return [item];
     }
     if(parentTag) {
