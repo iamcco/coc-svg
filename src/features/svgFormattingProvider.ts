@@ -16,7 +16,7 @@ import {
   TextEdit,
 } from 'vscode-languageserver-protocol';
 import vscUri from 'vscode-uri';
-import svgo = require('svgo');
+import svgo from 'svgo';
 
 export class SvgFormattingProvider implements DocumentFormattingEditProvider {
   private _plugins: string[];
@@ -77,7 +77,7 @@ export class SvgFormattingProvider implements DocumentFormattingEditProvider {
       js2svg: { pretty: true }
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       var oldText = document.getText();
       var p = formatter.optimize(oldText);
       p.then((result) => {
@@ -92,9 +92,9 @@ export class SvgFormattingProvider implements DocumentFormattingEditProvider {
         this._lastKnownFormatChanged = (oldText != result.data);
         this._lastKnownFormatDocument = vscUri.parse(document.uri).fsPath
         this._lastKnownFormatTime = new Date().getTime();
-      }).catch(e=>{
-        workspace.showMessage('Unable to format because of an error\r\n')
-        reject(e);
+      }).catch((err: Error) =>{
+        workspace.showMessage(`Unable to format because of an error: ${err.message}`)
+        resolve(null)
       });
     });
   }

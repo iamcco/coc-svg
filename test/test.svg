@@ -1,3 +1,8 @@
-<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 0h400v400H0h0" stroke="#000" stroke-width="2"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="400">
+    <path stroke="#000" stroke-width="2" d="M0 0h400v400H0h0"/>
+    <defs>
+        <path id="a" fill="#c00" d="M10 10h100v50H10z"/>
+    </defs>
+    <use xlink:href="#a"/>
+    <use x="110" href="#a"/>
 </svg>
