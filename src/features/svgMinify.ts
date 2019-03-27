@@ -19,7 +19,7 @@ export async function svgMinify() {
       range,
       newText: result.data
     }])
-  }).catch((err: Error) => {
-    workspace.showMessage(err.message)
+  }).catch(err => {
+    workspace.showMessage((err.message || err).replace(/\r?\n/g, ' '))
   });
 }

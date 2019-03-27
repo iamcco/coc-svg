@@ -92,8 +92,8 @@ export class SvgFormattingProvider implements DocumentFormattingEditProvider {
         this._lastKnownFormatChanged = (oldText != result.data);
         this._lastKnownFormatDocument = vscUri.parse(document.uri).fsPath
         this._lastKnownFormatTime = new Date().getTime();
-      }).catch((err: Error) =>{
-        workspace.showMessage(`Unable to format because of an error: ${err.message}`)
+      }).catch(err =>{
+        workspace.showMessage(`Unable to format because of an error: ${(err.message || err).replace(/\r?\n/g, ' ')}`)
         resolve(null)
       });
     });
