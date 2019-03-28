@@ -69,8 +69,7 @@ function createHtml(doc: TextDocument): string {
             height: 24px;
             width: 100%;
             z-index: 10000;
-            background: var(--vscode-tab-activeBackground);
-            border-bottom: solid 1px var(--vscode-tab-activeBorder);
+            background: rgba(100,100,100, 0.5);
         }
 
         #__toolbar>.btn-group {
@@ -141,8 +140,6 @@ function createHtml(doc: TextDocument): string {
         return btn;
     }
 
-    const vscode = acquireVsCodeApi();
-
     var minScale = 0.08;
     var maxScale = 8;
     var scale = 1;
@@ -165,37 +162,55 @@ function createHtml(doc: TextDocument): string {
     function init() {
         toolbar = document.getElementById('__toolbar');
         groupBackground = createButtonGroup();
-        var btnBg = createButton(groupBackground, null, e=>{document.body.className='bg-trans';vscode.postMessage({action:'bg', color:'transparent'})});
+
+        var btnBg = createButton(groupBackground, null, e=>{
+          document.body.className='bg-trans';
+        });
         btnBg.title = 'Use Transparent Background';
         btnBg.className = 'btn-bg bg-trans';
-        btnBg = createButton(groupBackground, null, e=>{document.body.className='bg-white';vscode.postMessage({action:'bg', color:'white'})});
+
+        btnBg = createButton(groupBackground, null, e=> {
+          document.body.className='bg-white';
+        });
         btnBg.title = 'Use White Background';
         btnBg.className = 'btn-bg bg-white';
-        btnBg = createButton(groupBackground, null, e=>{document.body.className='bg-black';vscode.postMessage({action:'bg', color:'black'})});
+
+        btnBg = createButton(groupBackground, null, e=> {
+          document.body.className='bg-black';
+        });
         btnBg.title = 'Use Black Background';
         btnBg.className = 'btn-bg bg-black';
-        btnBg = createButton(groupBackground, null, e=>{document.body.className='bg-custom';vscode.postMessage({action:'bg', color:'custom'})});
+
+        btnBg = createButton(groupBackground, null, e=> {
+          document.body.className='bg-custom';
+        });
         btnBg.title = 'Use Custom Background\\nModifty \\'svg.preview.backgroundCustom\\' Setting.';
         btnBg.className = 'btn-bg bg-custom';
 
         var groupZoom = createButtonGroup();
+
         labelZoom = document.createElement('span');
         labelZoom.style.fontSize = "10px";
         labelZoom.className = 'label';
+
         showZoom();
+
         groupZoom.appendChild(labelZoom);
+
         createButton(groupZoom, 'Original', e=>{
             scale = 1;
             showZoom();
             document.getElementById('__svg').style.transform = 'scale('+scale+')';
             vscode.postMessage({action: 'scale', scale: scale});
         }).className = 'btn';
+
         createButton(groupZoom, 'Zoom In', e=>{
             scale*=2;
             normalScale();
             document.getElementById('__svg').style.transform = 'scale('+scale+')';
             vscode.postMessage({action: 'scale', scale: scale});
         }).className = 'btn';
+
         createButton(groupZoom, 'Zoom Out', e=>{
             scale/=2;
             normalScale();
@@ -204,17 +219,7 @@ function createHtml(doc: TextDocument): string {
         }).className = 'btn';
     }
 
-    console.warn('document.readyState', document.readyState);
-
-    if(document.readyState != 'loading') {
-        init();
-    } else {
-        document.onreadystatechange = function(){
-            if(document.readyState == 'interactive') {
-                init();
-            }
-        }
-    }
+    init();
     </script></body>`);
   html.push('</html>');
   return html.join('');
