@@ -1,7 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="400">
     <defs>
         <path id="a" fill="#c00" d="M10 10h100v50H10z"/>
+        <pattern id="grid" width="0.2" height="0.2" x="100" y="100" patternUnits="objextBoundingBox">
+            <circle cx="10" cy="10" r="5" fill="red"/>
+            <polygon fill="green" points="30 10 60 50 0 50"/>
+        </pattern>
     </defs>
     <use xlink:href="#a"/>
     <use x="110" href="#a"/>
+    <rect width="400" height="300" x="100" y="100" fill="url(#grid)" stroke="blue"/>
 </svg>
