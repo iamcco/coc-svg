@@ -23,15 +23,17 @@ export class SvgDefinitionProvider implements DefinitionProvider {
     if(idRefRange && !utils.isRangeEmpty(idRefRange)) {
       const word = document.getText(idRefRange)
       if (/url\(#[^\)\r\n]+\)/.test(word)) {
-        let body = document.getText();
-        let idRef = document.getText(idRefRange);
-        let id = idRef.substr(5, idRef.length - 6);
-        let definePoint = body.indexOf(' id="'+id+'"');
-        if(definePoint > 0) {
-          let startTag = utils.getInStartTagFromOffset(token, body, definePoint);
-          if(startTag) {
-            let pos = document.positionAt(startTag.index);
-            return Location.create(document.uri, { start: pos, end: pos });
+        let m = word.match(/url\(#[\)]+\)/)
+        if (m && m['1']) {
+          let id = m['1'].trim()
+          let body = document.getText();
+          let definePoint = body.indexOf(' id="'+id+'"');
+          if(definePoint > 0) {
+            let startTag = utils.getInStartTagFromOffset(token, body, definePoint);
+            if(startTag) {
+              let pos = document.positionAt(startTag.index);
+              return Location.create(document.uri, { start: pos, end: pos });
+            }
           }
         }
       } else if (/href=("|')[^\1]+\1/.test(word)) {
