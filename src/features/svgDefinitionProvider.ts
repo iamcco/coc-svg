@@ -23,7 +23,7 @@ export class SvgDefinitionProvider implements DefinitionProvider {
     if(idRefRange && !utils.isRangeEmpty(idRefRange)) {
       const word = document.getText(idRefRange)
       if (/url\(#[^\)\r\n]+\)/.test(word)) {
-        let m = word.match(/url\(#[\)]+\)/)
+        let m = word.match(/url\(#([^)]+)\)/)
         if (m && m['1']) {
           let id = m['1'].trim()
           let body = document.getText();
