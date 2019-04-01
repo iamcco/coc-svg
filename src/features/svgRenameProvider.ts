@@ -178,6 +178,8 @@ export class SvgRenameProvider implements RenameProvider {
         );
       } else if(word.startsWith('#')) {
         return this.provideIdRename(document, word.substr(1), newName, token);
+      } else if (word.startsWith('url(#')) {
+        return this.provideIdRename(document, word.slice(5, -1), newName, token);
       } else {
         // TODO: /id="[a-zA-Z0-9_]+"/ regex pattern
         wordRange = doc.getWordRangeAtPosition(position, '=_"');
