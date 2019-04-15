@@ -37,6 +37,12 @@ Almost all the features you need to handle SVG.
 
 ``` jsonc
 {
+    "svg.completion.insertCloseTagSign": {
+      "title": "Insert close tag sign",
+      "type": "boolean",
+      "default": true,
+      "description": "Specifies whether insert close tag sign '>'"
+    },
     "svg.completion.showAdvanced": {
       "title": "Show advanced items in completion list.",
       "type": "boolean",

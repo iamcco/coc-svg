@@ -7,7 +7,7 @@
     "neovim",
     "vim"
   ],
-  "version": "0.0.8",
+  "version": "0.0.9",
   "publisher": "iamcco",
   "license": "MIT",
   "repository": {
@@ -40,6 +40,12 @@
     "configuration": {
       "title": "svg",
       "properties": {
+        "svg.completion.insertCloseTagSign": {
+          "title": "Insert close tag sign",
+          "type": "boolean",
+          "default": true,
+          "description": "Specifies whether insert close tag sign '>'"
+        },
         "svg.completion.showAdvanced": {
           "title": "Show advanced items in completion list.",
           "type": "boolean",

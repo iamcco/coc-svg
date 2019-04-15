@@ -28,6 +28,7 @@ let colors = 'aliceblue,antiquewhite,aqua,aquamarine,azure,beige,bisque,black,bl
 export class SVGCompletionItemProvider implements CompletionItemProvider
 {
 
+  public insertCloseTagSign: boolean = true;
   public showAdvanced: boolean = false;
   public showDeprecated: boolean = false;
 
@@ -44,6 +45,7 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
 
   updateConfiguration() {
     let svgConf = workspace.getConfiguration('svg.completion');
+    this.insertCloseTagSign = svgConf.get<boolean>('insertCloseTagSign')
     this.showAdvanced = svgConf.get<boolean>("showAdvanced");
     this.showDeprecated = svgConf.get<boolean>("showDeprecated");
   }
@@ -83,16 +85,30 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
         i += 1
       }
     }
-    if(ele.simple === true) {
-      if (i === 1) {
-        snippetString += '${0} />';
+    if (this.insertCloseTagSign) {
+      if(ele.simple === true) {
+        if (i === 1) {
+          snippetString += '${0} />';
+        } else {
+          snippetString += '${' + i + '} />${0}';
+        }
+      } else if(ele.inline === true) {
+        snippetString += '>${0}</' + element + '>';
       } else {
-        snippetString += '${' + i + '} />${0}';
+        snippetString += '>\n\t${0}\n</' + element + '>';
       }
-    } else if(ele.inline === true) {
-      snippetString += '>${0}</' + element + '>';
     } else {
-      snippetString += '>\n\t${0}\n</' + element + '>';
+      if(ele.simple === true) {
+        if (i === 1) {
+          snippetString += '${0} /';
+        } else {
+          snippetString += '${' + i + '}${0} /';
+        }
+      } else if(ele.inline === true) {
+        snippetString += '>${0}</' + element + '';
+      } else {
+        snippetString += '>\n\t${0}\n</' + element;
+      }
     }
     // snippet
     item.insertTextFormat = InsertTextFormat.Snippet
@@ -278,7 +294,11 @@ export class SVGCompletionItemProvider implements CompletionItemProvider
     if(prevTag === undefined) {
       let ele = svg.elements['svg'];
       let item = this.createCompletionItem('svg', ele);
-      item.textEdit = TextEdit.insert(position, "svg${1} xmlns=\"http://www.w3.org/2000/svg\">\n\t${0}\n</svg>");
+      if (this.insertCloseTagSign) {
+        item.textEdit = TextEdit.insert(position, "svg${1} xmlns=\"http://www.w3.org/2000/svg\">\n\t${0}\n</svg>");
+      } else {
+        item.textEdit = TextEdit.insert(position, "svg${1} xmlns=\"http://www.w3.org/2000/svg\">\n\t${0}\n</svg");
+      }
       return [item];
     }
     if(parentTag) {
