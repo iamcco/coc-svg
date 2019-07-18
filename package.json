@@ -7,7 +7,7 @@
     "neovim",
     "vim"
   ],
-  "version": "0.0.10",
+  "version": "0.0.11",
   "publisher": "iamcco",
   "license": "MIT",
   "repository": {
@@ -120,6 +120,7 @@
     "colors": "^1.1.2",
     "sprintf-js": "^1.0.3",
     "svgo": "^1.0.1",
+    "tslib": "^1.10.0",
     "vscode-languageserver-protocol": "^3.15.0-next.1",
     "vscode-uri": "^1.0.6"
   }
