@@ -28,7 +28,7 @@ export class SvgFormattingProvider implements DocumentFormattingEditProvider {
   private _lastKnownFormatChanged = false;
 
   constructor() {
-    var pluginDirs = join(__dirname, '..', '..', '..', '..', '..', 'node_modules', 'svgo', 'plugins');
+    var pluginDirs = join(__dirname, '..', '..', '..', 'node_modules', 'svgo', 'plugins');
     this._plugins = readdirSync(pluginDirs)
       .map((file) => file.replace(extname(file), ''));
 
